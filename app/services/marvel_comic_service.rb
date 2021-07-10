@@ -3,10 +3,8 @@ class MarvelComicService
   include FaradayModule
 
   def comics
-    params = default_params.merge({ orderBy: '-modified' })
-
     response = conn.get(comics_path) do |request|
-      request.params = params
+      request.params = comics_params
     end
 
     {
@@ -15,10 +13,8 @@ class MarvelComicService
   end
 
   def comic_characters(comic_id:, nameStartsWith: nil)
-    params = default_params.merge({ nameStartsWith: nameStartsWith })
-
     response = conn.get(comic_characters_path(comic_id)) do |request|
-      request.params = params
+      request.params = comic_characters_params(nameStartsWith: nameStartsWith)
     end
     { body: response_body(response), status: response.status }
   end
@@ -41,6 +37,15 @@ class MarvelComicService
       hash: marvel_hash,
       apikey: Rails.application.credentials.fetch(:MARVEL_PUBLIC_KEY, '')
     }
+  end
+
+  def comics_params
+    default_params.merge({ orderBy: '-modified' })
+  end
+
+  def comic_characters_params(nameStartsWith:)
+    return default_params if nameStartsWith.nil?
+    default_params.merge({ nameStartsWith: nameStartsWith })
   end
 
   def marvel_hash
