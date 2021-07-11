@@ -2,9 +2,10 @@ class MarvelComicService
   attr_reader :ts
   include FaradayModule
 
-  def comics
+  def comics(params={})
+    page =  params[:page]&.to_i || 1
     response = conn.get(comics_path) do |request|
-      request.params = comics_params
+      request.params = comics_params(page: page)
     end
 
     {
@@ -39,8 +40,9 @@ class MarvelComicService
     }
   end
 
-  def comics_params
-    default_params.merge({ orderBy: '-modified' })
+  def comics_params(page: 1, per_page: 20)
+    offset = (page - 1) * per_page
+    default_params.merge({ orderBy: '-modified', offset: offset })
   end
 
   def comic_characters_params(nameStartsWith:)
