@@ -9,7 +9,7 @@ class PaginateService
 		end
 
 		def current_page(params)
-	    params[:page]&.to_i || 1
+	    params['page']&.to_i || 1
 	  end
 
 	  def next_page(params, data)

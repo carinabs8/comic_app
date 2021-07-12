@@ -13,9 +13,9 @@ class MarvelComicService
     }
   end
 
-  def comic_characters(comic_id:, nameStartsWith: nil)
-    response = conn.get(comic_characters_path(comic_id)) do |request|
-      request.params = comic_characters_params(nameStartsWith: nameStartsWith)
+  def comic_characters(name: nil)
+    response = conn.get(comic_characters_path) do |request|
+      request.params = comic_characters_params(name: name)
     end
     { body: response_body(response), status: response.status }
   end
@@ -45,9 +45,9 @@ class MarvelComicService
     default_params.merge({ orderBy: '-modified', offset: offset })
   end
 
-  def comic_characters_params(nameStartsWith:)
-    return default_params if nameStartsWith.nil?
-    default_params.merge({ nameStartsWith: nameStartsWith })
+  def comic_characters_params(name:)
+    return default_params if name.nil?
+    default_params.merge({ name: name })
   end
 
   def marvel_hash
@@ -62,8 +62,8 @@ class MarvelComicService
     '/v1/public/comics'
   end
 
-  def comic_characters_path(comic_id)
-    "/v1/public/comics/#{comic_id}/characters"
+  def comic_characters_path
+    "/v1/public/characters"
   end
 
   def default_domain
