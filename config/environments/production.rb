@@ -110,4 +110,5 @@ Rails.application.configure do
   # config.active_record.database_selector = { delay: 2.seconds }
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
+  config.cache_store = :redis_cache_store, { url: ENV.fetch("REDIS_URL", (Rails.application.credentials.fetch(:REDIS_URL, ""))) }
 end

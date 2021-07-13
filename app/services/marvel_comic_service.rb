@@ -4,13 +4,17 @@ class MarvelComicService
 
   def comics(params={})
     page =  params[:page]&.to_i || 1
-    response = conn.get(comics_path) do |request|
-      request.params = comics_params(page: page)
-    end
+    character_ids = params['character_ids']
+    Rails.cache.fetch(comics_cache_name(page, character_ids), expires_in: 24.hours) do
 
-    {
-      body: response_body(response), status: response_status(response)
-    }
+      response = conn.get(comics_path) do |request|
+        request.params = comics_params(page: page, character_ids: character_ids)
+      end
+
+      {
+        body: response_body(response), status: response_status(response)
+      }
+    end
   end
 
   def comic_characters(name: nil)
@@ -21,6 +25,10 @@ class MarvelComicService
   end
 
   private
+
+  def comics_cache_name(page, character_ids)
+    ['comics', page, character_ids&.sort ].join('_')
+  end
 
   def response_body(response)
     return if response.body.nil?
@@ -40,9 +48,14 @@ class MarvelComicService
     }
   end
 
-  def comics_params(page: 1, per_page: 20)
+  def comics_params(page: 1, per_page: 20, character_ids:)
     offset = (page - 1) * per_page
-    default_params.merge({ orderBy: '-modified', offset: offset })
+    params = { orderBy: '-modified', offset: offset }
+    unless character_ids.blank?
+      params.merge!(characters: character_ids.join('-'))
+    end
+
+    default_params.merge(params)
   end
 
   def comic_characters_params(name:)
