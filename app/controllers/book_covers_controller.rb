@@ -3,7 +3,7 @@ class BookCoversController < ApplicationController
 
   def index
     marvel_service = MarvelComicService.new
-    response = marvel_service.comics(comics_params)
+    response = marvel_service.comics(comics_params, @current_user_i)
     pagination(response[:body]['data'], params)
     render json: response[:body].to_json, status: response[:status]
   end
@@ -18,7 +18,7 @@ class BookCoversController < ApplicationController
   end
 
   def upvote
-    upvote_service = UpVoteService.new(params[:book_cover_id], @current_user)
+    upvote_service = UpVoteService.new(params[:book_cover_id], @current_user_id)
 
     upvote_service.vote!
     render status: upvote_service.http_status
@@ -27,10 +27,10 @@ class BookCoversController < ApplicationController
   private
 
   def set_session
-    @current_user = current_user
+    @current_user_id = current_user_id
   end
 
-  def current_user
+  def current_user_id
     session[:current_user_id] ||= Time.current.to_i
   end
 

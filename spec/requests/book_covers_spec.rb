@@ -39,40 +39,41 @@ RSpec.describe "BookCovers", type: :request do
                 "http://marvel.com/comics/collection/91806/king_in_black_planet_of_the_symbiotes_tpb_trade_paperback?utm_campaign=apiRef&utm_source=07e3e205bebd46de31d15ee9a76d85c2"
               }
             ],
-          "variants"=>[],
-          "collections"=>[],
-          "collectedIssues"=>[],
-          "dates"=>[{"type"=>"onsaleDate", "date"=>"2021-07-14T00:00:00-0400"}, {"type"=>"focDate", "date"=>"2021-05-17T00:00:00-0400"}],
-          "prices"=>[{"type"=>"printPrice", "price"=>15.99}],
-          "thumbnail"=>{"path"=>"http://i.annihil.us/u/prod/marvel/i/mg/5/b0/60a2e0406cf72", "extension"=>"jpg"},
-          "images"=>[{"path"=>"http://i.annihil.us/u/prod/marvel/i/mg/5/b0/60a2e0406cf72", "extension"=>"jpg"}],
-          "creators"=>
-            {
-              "available"=>19,
-              "collectionURI"=>"http://gateway.marvel.com/v1/public/comics/91806/creators",
-              "items"=>
-                [
-                  {
-                    "resourceURI"=>"http://gateway.marvel.com/v1/public/creators/13162", "name"=>"Erick Arciniega", "role"=>"colorist"
-                  }
-                ],
-              "returned"=>19
-            },
-          "characters"=>{
-            "available"=>0, "collectionURI"=>"http://gateway.marvel.com/v1/public/comics/91806/characters", "items"=>[], "returned"=>0
-          },
-          "stories"=>{
-            "available"=>2,
-            "collectionURI"=>"http://gateway.marvel.com/v1/public/comics/91806/stories",
-            "items"=>[
+            "variants"=>[],
+            "collections"=>[],
+            "collectedIssues"=>[],
+            "dates"=>[{"type"=>"onsaleDate", "date"=>"2021-07-14T00:00:00-0400"}, {"type"=>"focDate", "date"=>"2021-05-17T00:00:00-0400"}],
+            "prices"=>[{"type"=>"printPrice", "price"=>15.99}],
+            "thumbnail"=>{"path"=>"http://i.annihil.us/u/prod/marvel/i/mg/5/b0/60a2e0406cf72", "extension"=>"jpg"},
+            "images"=>[{"path"=>"http://i.annihil.us/u/prod/marvel/i/mg/5/b0/60a2e0406cf72", "extension"=>"jpg"}],
+            "creators"=>
               {
-                "resourceURI"=>"http://gateway.marvel.com/v1/public/stories/204697", "name"=>"cover from KING IN BLACK: PLANET OF THE SYMBIOTES TPB (2021) #1", "type"=>"cover"
-              }
-            ],
-            "returned"=>2
-          },
-          "events"=>{
-            "available"=>0, "collectionURI"=>"http://gateway.marvel.com/v1/public/comics/91806/events", "items"=>[], "returned"=>0}
+                "available"=>19,
+                "collectionURI"=>"http://gateway.marvel.com/v1/public/comics/91806/creators",
+                "items"=>
+                  [
+                    {
+                      "resourceURI"=>"http://gateway.marvel.com/v1/public/creators/13162", "name"=>"Erick Arciniega", "role"=>"colorist"
+                    }
+                  ],
+                "returned"=>19
+              },
+            "characters"=>{
+              "available"=>0, "collectionURI"=>"http://gateway.marvel.com/v1/public/comics/91806/characters", "items"=>[], "returned"=>0
+            },
+            "stories"=>{
+              "available"=>2,
+              "collectionURI"=>"http://gateway.marvel.com/v1/public/comics/91806/stories",
+              "items"=>[
+                {
+                  "resourceURI"=>"http://gateway.marvel.com/v1/public/stories/204697", "name"=>"cover from KING IN BLACK: PLANET OF THE SYMBIOTES TPB (2021) #1", "type"=>"cover"
+                }
+              ],
+              "returned"=>2
+            },
+            "events"=>{
+              "available"=>0, "collectionURI"=>"http://gateway.marvel.com/v1/public/comics/91806/events", "items"=>[], "returned"=>0
+            }
           }
         ]
       }
@@ -163,7 +164,7 @@ RSpec.describe "BookCovers", type: :request do
 
     it 'destroy an exist upvote' do
       popular_comic = create(:popular_comic)
-      allow_any_instance_of(BookCoversController).to receive(:current_user).and_return(popular_comic.user_id)
+      allow_any_instance_of(BookCoversController).to receive(:current_user_id).and_return(popular_comic.user_id)
       post book_cover_upvote_path(popular_comic.external_id)
       expect(response.status).to eq(204)
     end

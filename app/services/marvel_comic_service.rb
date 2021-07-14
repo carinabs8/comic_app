@@ -2,7 +2,7 @@ class MarvelComicService
   attr_reader :ts
   include FaradayModule
 
-  def comics(params={})
+  def comics(params={}, user_id)
     page =  params[:page]&.to_i || 1
     character_ids = params['character_ids']
     Rails.cache.fetch(comics_cache_name(page, character_ids), expires_in: 24.hours) do
@@ -10,9 +10,9 @@ class MarvelComicService
       response = conn.get(comics_path) do |request|
         request.params = comics_params(page: page, character_ids: character_ids)
       end
-
+      body = inject_upvote_into_response(user_id, response_body(response))
       {
-        body: response_body(response), status: response_status(response)
+        body: body, status: response_status(response)
       }
     end
   end
@@ -29,7 +29,21 @@ class MarvelComicService
     end
   end
 
+  def inject_upvote_into_response(user_id, response)
+    response_results(response).each do |result|
+      if result.is_a?(Hash)
+        result['user_favorite'] = PopularComic.favorites_by_user_id(user_id).include? result['id']&.to_i
+      end
+    end
+    response
+  end
+
   private
+
+  def response_results(response)
+    return response if response['data'].blank?
+    response['data']['results']
+  end
 
   def no_data_found
     { 
