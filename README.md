@@ -15,13 +15,21 @@ Things you may want to cover:
 * Configuration
 
 * Database creation
+* 	Postgres is a requirement of this project
+* 	bundle exec rake db:create
 
 * Database initialization
 
 * How to run the test suite
+* 	In a way to run tests you need beeing setup postgres database as requirement.
+* 	bundle exec rake db:create
+* 	bundle exec rake db:schema:load
+* 	bundle exec rspec
 
 * Services (job queues, cache servers, search engines, etc.)
 
 * Deployment instructions
+* 	This project uses docker. So, to deploy you just need run docker-compose up
+* 	docker-compose up
 
 * ...
