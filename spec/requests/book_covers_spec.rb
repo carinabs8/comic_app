@@ -145,5 +145,13 @@ RSpec.describe "BookCovers", type: :request do
       post search_book_covers_path, params: {name: 'THOR'}
       expect(response.status).to eq(200)
     end
+
+    it 'Return 200 ok when character is not pass under seach parameter' do
+      stubs.get('/v1/public/comics') { |env| [ 200, {'Content-Type' => 'application/json'}, {}.to_json ] }
+      allow_any_instance_of(MarvelComicService).to receive(:connection).and_return(conn)
+
+      post search_book_covers_path
+      expect(response.status).to eq(200)
+    end
   end
 end
