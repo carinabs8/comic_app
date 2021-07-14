@@ -18,16 +18,32 @@ class MarvelComicService
   end
 
   def comic_characters(name: nil)
-    response = conn.get(comic_characters_path) do |request|
-      request.params = comic_characters_params(name: name)
+    return no_data_found if name.blank?
+    params = comic_characters_params(name: name)
+
+    Rails.cache.fetch(comic_characters_cache_name(params), expires_in: 24.hours) do
+      response = conn.get(comic_characters_path) do |request|
+        request.params = params
+      end
+      { body: response_body(response), status: response.status }
     end
-    { body: response_body(response), status: response.status }
   end
 
   private
 
+  def no_data_found
+    { 
+      body: { 'data' => { 'results'=> [], 'total' => 0 }},
+      status: 200
+    }
+  end
+
   def comics_cache_name(page, character_ids)
-    ['comics', page, character_ids&.sort ].join('_')
+    [comics_path, page, character_ids&.sort ].join('_')
+  end
+
+  def comic_characters_cache_name(params)
+    [comic_characters_path, params.values&.join('_')].join('_')
   end
 
   def response_body(response)

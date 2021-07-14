@@ -8,11 +8,9 @@ class BookCoversController < ApplicationController
 
   def search
     marvel_service = MarvelComicService.new
-    response = marvel_service.comic_characters(comics_params.to_options)
+    response = marvel_service.comic_characters(name: comics_params[:name])
 
-    data = response[:body]['data']
-    params_character_ids = { character_ids: data['results']&.map{|result| result['id']} }
-    response = marvel_service.comics(params.merge(params_character_ids))
+    response = marvel_service.comics(params.merge(character_ids(response[:body]['data'])))
     pagination(response[:body]['data'], params)
     render json: response[:body].to_json, status: response[:status]
   end
@@ -20,8 +18,13 @@ class BookCoversController < ApplicationController
   private
 
   def comics_params
-    return params unless params.has_key? :name
-    { name: params[:name] }
+    return params if params[:name].blank?
+    { name: params[:name] }.to_options
+  end
+
+  def character_ids(data)
+    return {} if data.blank?
+    { character_ids: data['results']&.map{|result| result['id']} }
   end
 
   def pagination(data, params)

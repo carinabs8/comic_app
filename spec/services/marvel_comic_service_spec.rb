@@ -39,21 +39,50 @@ RSpec.describe MarvelComicService, type: :model do
   end
 
   describe '#comic_characters' do
-    it "make a request to comics with '/v1/public/comics/1/characters' path" do
-      stubs.get('/v1/public/comics/1/characters') { |env| [ 200, {'Content-Type' => 'application/json'}, {}.to_json ] }
-      allow_any_instance_of(described_class).to receive(:connection).and_return(conn)
-
-      marvel_comic_service = described_class.new
-      expect(marvel_comic_service.comic_characters(comic_id: 1)).to eq({ body: {}, status: 200 })
+    let(:character_payload) do
+      {
+       "code"=>200,
+       "data"=>{
+          "offset"=>0,
+          "limit"=>20,
+          "total"=>49265,
+          "count"=>20,
+          "results"=> [
+            'id' => 1,
+            'name' => 'X-men'
+          ]
+        }
+      }
     end
 
-    it 'searches by character' do
-      stubs.get('/v1/public/comics/1/characters') { |env| [ 200, {'Content-Type' => 'application/json'}, {}.to_json ] }
+    it "searches by character's name" do
+      stubs.get('/v1/public/characters') { |env| [ 200, {'Content-Type' => 'application/json'}, character_payload.to_json ] }
       allow_any_instance_of(described_class).to receive(:connection).and_return(conn)
 
       marvel_comic_service = described_class.new
-      expect(marvel_comic_service).to receive(:comic_characters_params).with(nameStartsWith: 'X-men').and_return({ nameStartsWith: 'X-men' })
-      marvel_comic_service.comic_characters(comic_id: 1, nameStartsWith: 'X-men')
+      expect(marvel_comic_service.comic_characters(name: 'X-men')).to eq({
+        :body=>{
+          "code"=>200, 
+          "data"=>{
+            "offset"=>0, "limit"=>20, "total"=>49265, "count"=>20, 
+            "results"=>[{"id"=>1, "name"=>"X-men"}]
+          }
+        },
+        :status=>200
+      })
+    end
+
+    it 'not found record when name is blank' do
+      marvel_comic_service = described_class.new
+      expect(marvel_comic_service.comic_characters).to eq({
+        :body=>{ 
+          "data"=>{ 
+            'results'=> [],
+            'total'=> 0
+          }
+        },
+        :status=>200
+      })
     end
   end
 end
