@@ -19,6 +19,9 @@ Things you may want to cover:
 		* ***bundle exec rake db:create***
 
 * Database initialization
+	*		***docker-compose run web rake db:create***
+	*		***docker-compose run web rake db:schema:load***
+	* 	***docker-compose run web rake db:migrate***
 
 * How to run the test suite
 	* 	In a way to run tests you need beeing setup postgres database as requirement.
