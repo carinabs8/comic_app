@@ -154,4 +154,18 @@ RSpec.describe "BookCovers", type: :request do
       expect(response.status).to eq(200)
     end
   end
+
+  describe 'POST /upvote' do
+    it 'make a new upvote' do
+      post book_cover_upvote_path(1)
+      expect(response.status).to eq(201)
+    end
+
+    it 'destroy an exist upvote' do
+      popular_comic = create(:popular_comic)
+      allow_any_instance_of(BookCoversController).to receive(:current_user).and_return(popular_comic.user_id)
+      post book_cover_upvote_path(popular_comic.external_id)
+      expect(response.status).to eq(204)
+    end
+  end
 end

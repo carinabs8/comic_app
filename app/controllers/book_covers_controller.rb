@@ -17,8 +17,9 @@ class BookCoversController < ApplicationController
     render json: response[:body].to_json, status: response[:status]
   end
 
-  def vote
-    upvote_service = UpVoteService.new(params[:book_cover_id], current_user_id)
+  def upvote
+    upvote_service = UpVoteService.new(params[:book_cover_id], @current_user)
+
     upvote_service.vote!
     render status: upvote_service.http_status
   end
@@ -26,6 +27,10 @@ class BookCoversController < ApplicationController
   private
 
   def set_session
+    @current_user = current_user
+  end
+
+  def current_user
     session[:current_user_id] ||= Time.current.to_i
   end
 
