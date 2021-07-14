@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2021_07_14_005016) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "popular_comics", force: :cascade do |t|
+    t.bigint "external_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["external_id", "user_id"], name: "index_popular_comics_on_external_id_and_user_id"
+    t.index ["external_id"], name: "index_popular_comics_on_external_id"
+    t.index ["user_id"], name: "index_popular_comics_on_user_id"
+  end
 
 end
