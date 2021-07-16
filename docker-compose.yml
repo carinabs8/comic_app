@@ -8,18 +8,28 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+    networks:
+      - bridge
   redis:
     image: "redis:alpine"
+    networks:
+      - bridge
   web:
     build: .
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3001 -b '0.0.0.0'"
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 4001 -b '0.0.0.0'"
     environment:
       - RAILS_ENV=production
       - MASTER_KEY=b06a3aaa9fdf48779534a25dcd8fdaa7
+    networks:
+      - backend
+      - bridge
     volumes:
       - .:/myapp
     ports:
-      - "3001:3001"
+      - "4001:4001"
     depends_on:
       - db
       - redis
+networks:
+  bridge:
+  backend:

@@ -38,6 +38,16 @@ class MarvelComicService
     response
   end
 
+  class << self
+    def comics_cache_name(page:1, character_ids:[])
+      [comics_path, page, character_ids&.sort ].join('_')
+    end
+
+    def comics_path
+      '/v1/public/comics'
+    end
+  end
+
   private
 
   def response_results(response)
@@ -53,7 +63,11 @@ class MarvelComicService
   end
 
   def comics_cache_name(page, character_ids)
-    [comics_path, page, character_ids&.sort ].join('_')
+    MarvelComicService.comics_cache_name(page: page, character_ids: character_ids)
+  end
+
+  def comics_path
+    MarvelComicService.comics_path
   end
 
   def comic_characters_cache_name(params)
@@ -99,10 +113,6 @@ class MarvelComicService
       Rails.application.credentials.fetch(:MARVEL_PRIVATE_KEY, '') +
       Rails.application.credentials.fetch(:MARVEL_PUBLIC_KEY, '')
     )
-  end
-
-  def comics_path
-    '/v1/public/comics'
   end
 
   def comic_characters_path

@@ -3,7 +3,7 @@ class BookCoversController < ApplicationController
 
   def index
     marvel_service = MarvelComicService.new
-    response = marvel_service.comics(comics_params, @current_user_i)
+    response = marvel_service.comics(comics_params, @current_user_id)
     pagination(response[:body]['data'], params)
     render json: response[:body].to_json, status: response[:status]
   end
@@ -27,11 +27,13 @@ class BookCoversController < ApplicationController
   private
 
   def set_session
-    @current_user_id = current_user_id
+    @current_user_id ||= current_user_id
   end
 
   def current_user_id
-    session[:current_user_id] ||= Time.current.to_i
+    Rails.cache.fetch(:current_user_id, expires_in: 1.hour) do
+      Time.current.to_i
+    end
   end
 
   def comics_params
@@ -41,7 +43,9 @@ class BookCoversController < ApplicationController
 
   def character_ids(data)
     return {} if data.blank?
-    { character_ids: data['results']&.map{|result| result['id']} }
+    character_ids = data['results']&.map{|result| result['id']}
+    return {} if character_ids.blank?
+    { character_ids: character_ids }
   end
 
   def pagination(data, params)
