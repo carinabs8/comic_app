@@ -9,8 +9,9 @@ Things you may want to cover:
 	***3.0.1***
 
 * System dependencies
-	***Docker
-	Github***
+	*	***Docker***
+	*	***Redis***
+	*	***Github***
 
 # Configuration
 
@@ -21,7 +22,7 @@ Things you may want to cover:
 * Database initialization
 	*		***docker-compose run web rake db:create***
 	*		***docker-compose run web rake db:schema:load***
-	* 	***docker-compose run web rake db:migrate***
+	* 		***docker-compose run web rake db:migrate***
 
 * How to run the test suite
 	* 	In a way to run tests you need beeing setup postgres database as requirement.
@@ -39,4 +40,4 @@ Things you may want to cover:
 # Http rests
 	1	GET localhost:4001/book_covers
 	2	POST localhost:4001/book_covers/search
-	3	POST localhost:4001/**:book_covers**/22317/upvote
+	3	POST localhost:4001/:book_cover_ids/22317/upvote
