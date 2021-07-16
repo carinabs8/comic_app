@@ -35,6 +35,8 @@ Things you may want to cover:
 * Deployment instructions
 	* 	This project uses docker. So, to deploy you just need run docker-compose up
 		* 	**docker-compose up**
-* 	
-
-* ...
+* This backend is available under **4001*** port
+# Http rests
+	1	GET localhost:4001/book_covers
+	2	POST localhost:4001/book_covers/search
+	3	POST localhost:4001/**:book_covers**/22317/upvote
